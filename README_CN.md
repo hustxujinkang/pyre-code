@@ -55,16 +55,16 @@
 
 ### 安装
 
-**方式 A — 一键启动（推荐）**
+**方式 A — 跨平台启动（推荐）**
 
 ```bash
 git clone https://github.com/whwangovo/pyre-code.git
 cd pyre-code
-./setup.sh
+npm run setup
 npm run dev
 ```
 
-`setup.sh` 会自动创建 `.venv` 虚拟环境（优先用 `uv`，没有就回退到 `python3 -m venv`），装好所有依赖。
+`npm run setup` 可直接用于 macOS、Linux 和 Windows，会自动创建 `.venv` 虚拟环境、安装 Python 依赖，再安装根目录和 `web/` 的 Node 依赖。
 
 **方式 B — conda**
 
@@ -90,6 +90,8 @@ uv venv --python 3.11 .venv && source .venv/bin/activate && uv pip install -e ".
 npm install
 npm run dev
 ```
+
+如果你在 Windows PowerShell 下手动配置，用 `py -3 -m venv .venv` 和 `.\.venv\Scripts\python.exe -m pip install -e ".[dev]"` 代替 `source .venv/bin/activate`。
 
 跑起来之后：
 

@@ -57,16 +57,16 @@ The problems cover what's actually inside Transformers, vLLM, TRL, and diffusion
 
 ### Installation
 
-**Option A — one-liner (recommended)**
+**Option A — cross-platform setup (recommended)**
 
 ```bash
 git clone https://github.com/whwangovo/pyre-code.git
 cd pyre-code
-./setup.sh
+npm run setup
 npm run dev
 ```
 
-`setup.sh` automatically creates a `.venv` Python environment (prefers `uv`, falls back to `python3 -m venv`), installs all dependencies, then prints the start command.
+`npm run setup` works on macOS, Linux, and Windows. It creates a `.venv` Python environment, installs Python dependencies, then installs the root and `web/` Node dependencies.
 
 **Option B — conda**
 
@@ -92,6 +92,8 @@ uv venv --python 3.11 .venv && source .venv/bin/activate && uv pip install -e ".
 npm install
 npm run dev
 ```
+
+On Windows PowerShell, use `py -3 -m venv .venv` and `.\.venv\Scripts\python.exe -m pip install -e ".[dev]"` instead of `source .venv/bin/activate`.
 
 Either way, once running:
 
