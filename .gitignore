@@ -33,6 +33,7 @@ labextension/tsconfig.tsbuildinfo
 labextension/yarn.lock
 .worktrees/
 .omc/
+.tmp/
 CLAUDE.md
 
 # Runtime data
