@@ -18,8 +18,17 @@ function runTest(name, fn) {
   }
 }
 
+runTest("tests avoid machine-specific workspace paths", () => {
+  const source = fs.readFileSync(__filename, "utf8");
+  const currentWorkspaceLiteral = JSON.stringify(
+    path.resolve(__dirname, "..", "..")
+  ).slice(1, -1);
+
+  assert.equal(source.includes(currentWorkspaceLiteral), false);
+});
+
 runTest("prefers Windows virtualenv python when running on win32", () => {
-  const rootDir = "D:\\github-projects\\pyre-code";
+  const rootDir = path.win32.join("C:\\", "workspace", "pyre-code");
   const expected = path.join(rootDir, ".venv", "Scripts", "python.exe");
 
   const candidates = getVirtualEnvPythonCandidates(rootDir, "win32");
@@ -28,7 +37,7 @@ runTest("prefers Windows virtualenv python when running on win32", () => {
 });
 
 runTest("prefers POSIX virtualenv python when running on linux", () => {
-  const rootDir = "/workspace/pyre-code";
+  const rootDir = path.posix.join("/workspace", "pyre-code");
   const expected = path.join(rootDir, ".venv", "bin", "python");
 
   const candidates = getVirtualEnvPythonCandidates(rootDir, "linux");
@@ -38,7 +47,7 @@ runTest("prefers POSIX virtualenv python when running on linux", () => {
 
 runTest("falls back to system python when no virtualenv interpreter exists", () => {
   const resolved = resolvePythonExecutable({
-    rootDir: "/workspace/pyre-code",
+    rootDir: path.posix.join("/workspace", "pyre-code"),
     platform: "linux",
     existsSync: () => false,
   });
@@ -47,7 +56,7 @@ runTest("falls back to system python when no virtualenv interpreter exists", () 
 });
 
 runTest("uses the virtualenv interpreter when it exists", () => {
-  const rootDir = "D:\\github-projects\\pyre-code";
+  const rootDir = path.win32.join("C:\\", "workspace", "pyre-code");
   const venvPython = path.join(rootDir, ".venv", "Scripts", "python.exe");
   const resolved = resolvePythonExecutable({
     rootDir,
@@ -60,7 +69,7 @@ runTest("uses the virtualenv interpreter when it exists", () => {
 });
 
 runTest("falls back to system python when the virtualenv interpreter is not runnable", () => {
-  const rootDir = "D:\\github-projects\\pyre-code";
+  const rootDir = path.win32.join("C:\\", "workspace", "pyre-code");
   const venvPython = path.join(rootDir, ".venv", "Scripts", "python.exe");
   const resolved = resolvePythonExecutable({
     rootDir,
@@ -87,6 +96,7 @@ runTest("predev checks the backend import chain, not just torch_judge", () => {
 });
 
 runTest("setup uses a workspace-local temp directory on Windows", () => {
+  const rootDir = path.win32.join("C:\\", "workspace", "pyre-code");
   const env = buildChildEnv(
     {
       PATH: "C:\\Windows\\System32",
@@ -94,15 +104,15 @@ runTest("setup uses a workspace-local temp directory on Windows", () => {
       TMP: "C:\\Temp",
     },
     {
-      rootDir: "D:\\github-projects\\pyre-code",
+      rootDir,
       platform: "win32",
     }
   );
 
-  assert.equal(env.TEMP, "D:\\github-projects\\pyre-code\\.tmp\\setup");
-  assert.equal(env.TMP, "D:\\github-projects\\pyre-code\\.tmp\\setup");
+  assert.equal(env.TEMP, path.join(rootDir, ".tmp", "setup"));
+  assert.equal(env.TMP, path.join(rootDir, ".tmp", "setup"));
   assert.equal(
     env.npm_config_cache,
-    "D:\\github-projects\\pyre-code\\.tmp\\npm-cache"
+    path.join(rootDir, ".tmp", "npm-cache")
   );
 });
